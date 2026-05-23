@@ -6,7 +6,7 @@ if (!apiKey) {
   console.warn('GEMINI_API_KEY is not set. System features will not work.');
 }
 
-const genSystem = new GoogleGenerativeAI(apiKey || '');
+const genAI = new GoogleGenerativeAI(apiKey || '');
 
 const safetySettings = [
   { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
@@ -125,7 +125,28 @@ ${code}
     return result.response.text();
   } catch (error) {
     console.error('Documentation generation error:', error);
-    return '# Error\nCould not generate documentation. Please try again.';
+    throw error;
+  }
+}
+
+export async function generateRepoDocumentation(repoUrl: string): Promise<string> {
+  const prompt = `You are an expert software documentation analyst with extensive experience in analyzing GitHub repositories. I need a comprehensive analysis of a GitHub repository based purely on its URL.
+  
+Repository URL: ${repoUrl}
+
+Please provide a highly detailed markdown document containing:
+1. Installation instructions, an overview of the repository, and usage guidelines.
+2. The overall structure of the repository, including likely technologies used and design patterns employed.
+3. A comparative analysis with similar repositories, highlighting key details and differences.
+
+Use professional formatting with clear headings (e.g., #, ##, ###), bold text for emphasis, and tables if applicable. If you cannot access the exact files, provide an expert analysis of what standard repositories in this domain typically contain.`;
+
+  try {
+    const result = await geminiModel.generateContent(prompt);
+    return result.response.text();
+  } catch (error) {
+    console.error('Repo documentation generation error:', error);
+    return '# Error\nCould not generate repository documentation. Please try again.';
   }
 }
 

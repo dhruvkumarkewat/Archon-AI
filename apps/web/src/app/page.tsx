@@ -97,9 +97,9 @@ const steps = [
 ];
 
 const testimonials = [
-  { name: "Alex Chen", role: "CTO at TechVerse", text: "DevForge transformed how our team approaches code quality. The automated analysis caught critical bugs we completely missed in code review.", rating: 5, avatar: "AC" },
+  { name: "Alex Chen", role: "CTO at TechVerse", text: "Archon transformed how our team approaches code quality. The automated analysis caught critical bugs we completely missed in code review.", rating: 5, avatar: "AC" },
   { name: "Sarah Williams", role: "Lead Engineer at DataFlow", text: "The architecture visualization alone saved us weeks of documentation work. It's like having a senior architect on demand.", rating: 5, avatar: "SW" },
-  { name: "David Miller", role: "Founder of CodeCraft", text: "As a startup, we can't afford dedicated DevOps. DevForge gives us enterprise-grade tools at a fraction of the cost and zero setup.", rating: 5, avatar: "DM" },
+  { name: "David Miller", role: "Founder of CodeCraft", text: "As a startup, we can't afford dedicated DevOps. Archon gives us enterprise-grade tools at a fraction of the cost and zero setup.", rating: 5, avatar: "DM" },
 ];
 
 /* ===== MAIN COMPONENT ===== */
@@ -131,7 +131,7 @@ export default function LandingPage() {
     }
 
     const logs = [
-      "> Initializing DevForge engine...",
+      "> Initializing Archon engine...",
       "> Connecting to repository: github.com/user/project",
       "> Fetching source code... (45,210 lines)",
       "> Analyzing architecture...",
@@ -184,7 +184,7 @@ export default function LandingPage() {
           <Link href="/" className="flex items-center gap-3 group">
             <SystemIcon className="w-9 h-9 transition-transform duration-500 group-hover:rotate-180" />
             <span className="text-xl font-serif font-bold text-system-blue">
-              DevForge
+              Archon
             </span>
           </Link>
 
@@ -530,7 +530,7 @@ export default function LandingPage() {
             Ready to Transform Your Development?
           </h2>
           <p className="text-white/60 text-lg mb-10 max-w-xl mx-auto">
-            Join 10,000+ developers who are shipping better code with DevForge. Free to start, no credit card required.
+            Join 10,000+ developers who are shipping better code with Archon. Free to start, no credit card required.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
@@ -556,7 +556,7 @@ export default function LandingPage() {
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-4">
                 <SystemIcon className="w-7 h-7" />
-                <span className="text-white font-serif font-bold text-lg">DevForge</span>
+                <span className="text-white font-serif font-bold text-lg">Archon</span>
               </div>
               <p className="text-sm leading-relaxed">
                 Intelligent developer tools, built with modern engineering excellence and precision.
@@ -608,7 +608,7 @@ export default function LandingPage() {
           </div>
 
           <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm">&copy; 2026 DevForge. All rights reserved.</p>
+            <p className="text-sm">&copy; 2026 Archon. All rights reserved.</p>
             <div className="flex gap-6">
               <a href="#" className="hover:text-system-amber transition-colors" aria-label="GitHub">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
@@ -644,7 +644,7 @@ export default function LandingPage() {
                 >
                   <svg className="w-10 h-10 ml-2" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                 </div>
-                <h3 className="text-3xl font-serif font-bold mb-3 z-10">DevForge Live Demo</h3>
+                <h3 className="text-3xl font-serif font-bold mb-3 z-10">Archon Live Demo</h3>
                 <p className="text-white/60 text-lg z-10">Click play to watch the engine in action.</p>
               </div>
             ) : (
@@ -654,7 +654,7 @@ export default function LandingPage() {
                   <div className="w-3 h-3 rounded-full bg-system-red" />
                   <div className="w-3 h-3 rounded-full bg-system-amber" />
                   <div className="w-3 h-3 rounded-full bg-system-green" />
-                  <span className="ml-4 text-white/40 text-sm">devforge-engine ~ npm run scan</span>
+                  <span className="ml-4 text-white/40 text-sm">archon-engine ~ npm run scan</span>
                 </div>
                 
                 {/* Terminal Output */}

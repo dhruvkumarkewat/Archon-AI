@@ -12,8 +12,8 @@ export interface DemoUser {
   createdAt: string;
 }
 
-const USERS_KEY = 'devforge_users';
-const SESSION_KEY = 'devforge_session';
+const USERS_KEY = 'archon_users';
+const SESSION_KEY = 'archon_session';
 
 function getUsers(): Record<string, DemoUser & { password: string }> {
   if (typeof window === 'undefined') return {};
@@ -117,8 +117,8 @@ export async function signInWithProvider(provider: 'github' | 'google'): Promise
   await new Promise((r) => setTimeout(r, 1000));
 
   const demoProfiles: Record<string, { email: string; name: string }> = {
-    github: { email: 'demo-github@devforge.dev', name: 'GitHub Developer' },
-    google: { email: 'demo-google@devforge.dev', name: 'Google Developer' },
+    github: { email: 'demo-github@archon.dev', name: 'GitHub Developer' },
+    google: { email: 'demo-google@archon.dev', name: 'Google Developer' },
   };
 
   const profile = demoProfiles[provider];

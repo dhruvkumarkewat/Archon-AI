@@ -2,6 +2,7 @@
   "name": "korean-ai-platform",
   "private": true,
   "version": "1.0.0",
+  "packageManager": "npm@10.2.4",
   "workspaces": [
     "apps/*",
     "packages/*"

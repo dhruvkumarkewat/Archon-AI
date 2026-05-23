@@ -36,6 +36,7 @@ export default function RegisterPage() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const { register, oauthLogin, isDemo } = useAuth();
 
   useEffect(() => setMounted(true), []);
@@ -78,7 +79,11 @@ export default function RegisterPage() {
       await oauthLogin(provider);
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.message || `Failed to sign in with ${provider}`);
+      if (err.code === 'auth/account-exists-with-different-credential' || (err.message && err.message.includes('auth/account-exists-with-different-credential'))) {
+        setError("An account already exists with the same email address. Please sign in using the provider you originally used (e.g., Google or Email/Password).");
+      } else {
+        setError(err.message || `Failed to sign in with ${provider}`);
+      }
     }
   };
 
@@ -99,7 +104,7 @@ export default function RegisterPage() {
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3 group">
             <SystemIcon className="w-10 h-10 transition-transform duration-500 group-hover:rotate-180" />
-            <span className="text-2xl font-serif font-bold text-white">DevForge<span className="text-system-red-light"> System</span></span>
+            <span className="text-2xl font-serif font-bold text-white">Archon<span className="text-system-red-light"> System</span></span>
           </Link>
         </div>
 
@@ -123,7 +128,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="relative z-10">
-          <p className="text-white/30 text-sm">&copy; 2026 DevForge System. All rights reserved.</p>
+          <p className="text-white/30 text-sm">&copy; 2026 Archon Platform. All rights reserved.</p>
         </div>
       </div>
 
@@ -132,7 +137,7 @@ export default function RegisterPage() {
         <div className={`w-full max-w-md transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
           <div className="lg:hidden flex items-center gap-2 mb-8">
             <SystemIcon className="w-8 h-8" />
-            <span className="text-xl font-serif font-bold text-system-blue">DevForge System</span>
+            <span className="text-xl font-serif font-bold text-system-blue">Archon Platform</span>
           </div>
 
           <h1 className="text-3xl font-serif font-bold text-system-blue mb-2">Create your account</h1>

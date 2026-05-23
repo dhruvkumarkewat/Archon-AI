@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const displayName = user?.displayName || "Admin User";
   const initials = displayName.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() || "AU";
-  const displayEmail = user?.email || "admin@devforge.system";
+  const displayEmail = user?.email || "admin@archon.system";
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -66,7 +66,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <SystemIcon className="w-9 h-9 flex-shrink-0" />
           {!collapsed && (
             <span className="text-xl font-serif font-bold text-white whitespace-nowrap">
-              Dev<span className="text-system-red-light">Forge</span>
+              Archon<span className="text-system-red-light"> Platform</span>
             </span>
           )}
         </div>

@@ -30,7 +30,7 @@ try {
   db = getFirestore(app);
 } catch (e) {
   // Firebase init failed — will use demo mode
-  console.warn('[DevForge] Firebase not configured. Running in demo mode.');
+  console.warn('[Archon] Firebase not configured. Running in demo mode.');
   app = null as unknown as FirebaseApp;
   auth = null as unknown as Auth;
   db = null as unknown as Firestore;

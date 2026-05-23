@@ -4,22 +4,78 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 const mockRepos = [
-  { id: 1, name: "korean-ai-platform/web-frontend", desc: "Next.js application for the platform", lang: "TypeScript", langColor: "#3178C6", stars: 124, lastCommit: "2 hours ago", status: "Healthy", findings: 2 },
-  { id: 2, name: "korean-ai-platform/api-gateway", desc: "NestJS backend and API gateway", lang: "TypeScript", langColor: "#3178C6", stars: 89, lastCommit: "5 hours ago", status: "Needs Review", findings: 15 },
-  { id: 3, name: "korean-ai-platform/analysis-engine", desc: "Python-based code analysis worker", lang: "Python", langColor: "#3776AB", stars: 210, lastCommit: "1 day ago", status: "Critical", findings: 42 },
-  { id: 4, name: "korean-ai-platform/docs-generator", desc: "Go service for Swagger generation", lang: "Go", langColor: "#00ADD8", stars: 45, lastCommit: "3 days ago", status: "Healthy", findings: 0 },
-  { id: 5, name: "korean-ai-platform/auth-service", desc: "Authentication and SSO service", lang: "Rust", langColor: "#DEA584", stars: 156, lastCommit: "1 week ago", status: "Needs Review", findings: 8 },
-  { id: 6, name: "korean-ai-platform/infra", desc: "Terraform configurations", lang: "HCL", langColor: "#844FBA", stars: 32, lastCommit: "2 weeks ago", status: "Healthy", findings: 1 },
+  { id: 1, name: "archon-platform/web-frontend", desc: "Next.js application for the platform", lang: "TypeScript", langColor: "#3178C6", stars: 124, lastCommit: "2 hours ago", status: "Healthy", findings: 2 },
+  { id: 2, name: "archon-platform/api-gateway", desc: "NestJS backend and API gateway", lang: "TypeScript", langColor: "#3178C6", stars: 89, lastCommit: "5 hours ago", status: "Needs Review", findings: 15 },
+  { id: 3, name: "archon-platform/analysis-engine", desc: "Python-based code analysis worker", lang: "Python", langColor: "#3776AB", stars: 210, lastCommit: "1 day ago", status: "Critical", findings: 42 },
+  { id: 4, name: "archon-platform/docs-generator", desc: "Go service for Swagger generation", lang: "Go", langColor: "#00ADD8", stars: 45, lastCommit: "3 days ago", status: "Healthy", findings: 0 },
+  { id: 5, name: "archon-platform/auth-service", desc: "Authentication and SSO service", lang: "Rust", langColor: "#DEA584", stars: 156, lastCommit: "1 week ago", status: "Needs Review", findings: 8 },
+  { id: 6, name: "archon-platform/infra", desc: "Terraform configurations", lang: "HCL", langColor: "#844FBA", stars: 32, lastCommit: "2 weeks ago", status: "Healthy", findings: 1 },
 ];
 
 export default function RepositoriesPage() {
   const [mounted, setMounted] = useState(false);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [repoUrl, setRepoUrl] = useState("");
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [repos, setRepos] = useState(mockRepos);
 
   useEffect(() => setMounted(true), []);
 
-  const filteredRepos = mockRepos.filter(repo => 
+  const handleConnect = async () => {
+    if (!repoUrl) {
+      setError("Please enter a repository URL");
+      return;
+    }
+    setError(null);
+    setIsConnecting(true);
+
+    try {
+      // 1. Fetch Repo Data
+      const repoRes = await fetch(`/api/github?url=${encodeURIComponent(repoUrl)}`);
+      const repoData = await repoRes.json();
+      
+      if (!repoRes.ok) {
+        throw new Error(repoData.error || "Failed to fetch repository data");
+      }
+
+      // 2. Run Scanner
+      const scanRes = await fetch(`/api/scanner`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repoUrl, downloadUrl: repoData.downloadUrl })
+      });
+      const scanData = await scanRes.json();
+
+      if (!scanRes.ok) {
+        console.warn("Scanner failed, but adding repo anyway", scanData.error);
+      }
+      
+      const newRepo = {
+        id: Date.now(),
+        name: repoData.name,
+        desc: repoData.description,
+        lang: repoData.language,
+        langColor: repoData.language === "TypeScript" ? "#3178C6" : repoData.language === "Python" ? "#3776AB" : repoData.language === "Go" ? "#00ADD8" : "#844FBA",
+        stars: repoData.stars,
+        lastCommit: "Just now",
+        status: scanData?.result === 'Suspicious' ? 'Critical' : 'Healthy',
+        findings: scanData?.details?.maliciousDetections || 0,
+        downloadUrl: repoData.downloadUrl,
+      };
+      
+      setRepos(prev => [newRepo, ...prev]);
+      setShowModal(false);
+      setRepoUrl("");
+    } catch (err: any) {
+      setError(err.message || "Failed to connect repository");
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const filteredRepos = repos.filter(repo => 
     repo.name.toLowerCase().includes(search.toLowerCase()) || 
     repo.desc.toLowerCase().includes(search.toLowerCase())
   );
@@ -108,6 +164,11 @@ export default function RepositoriesPage() {
               <Link href={`/dashboard/analysis?repo=${repo.id}`} className="text-sm font-semibold text-system-blue hover:text-system-red transition-colors whitespace-nowrap">
                 {repo.findings > 0 ? `${repo.findings} Issues` : 'Report'} →
               </Link>
+              {(repo as any).downloadUrl && (
+                <a href={(repo as any).downloadUrl} target="_blank" rel="noopener noreferrer" className="p-2 text-system-gray-800/50 hover:text-system-blue hover:bg-system-blue/10 rounded-lg transition-colors ml-auto" title="Download ZIP">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                </a>
+              )}
             </div>
           </div>
         ))}
@@ -125,7 +186,11 @@ export default function RepositoriesPage() {
             </div>
             
             <div className="space-y-4 mb-6">
-              <button className="w-full flex items-center justify-center gap-3 p-4 rounded-xl border-2 border-system-gray-200 hover:border-system-gray-800/30 bg-white transition-colors">
+              <button 
+                type="button"
+                onClick={() => setError("GitHub App integration is currently disabled in demo mode. Please use the URL option.")}
+                className="w-full flex items-center justify-center gap-3 p-4 rounded-xl border-2 border-system-gray-200 hover:border-system-gray-800/30 bg-white transition-colors"
+              >
                 <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" /></svg>
                 <span className="font-semibold text-system-gray-800">Import from GitHub</span>
               </button>
@@ -138,13 +203,39 @@ export default function RepositoriesPage() {
               
               <div>
                 <label className="block text-sm font-semibold text-system-gray-800 mb-1.5">Repository URL</label>
-                <input type="text" className="base-input" placeholder="https://github.com/org/repo" />
+                <input 
+                  type="text" 
+                  className="base-input" 
+                  placeholder="https://github.com/org/repo" 
+                  value={repoUrl}
+                  onChange={(e) => setRepoUrl(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleConnect()}
+                  disabled={isConnecting}
+                />
+                {error && <p className="mt-2 text-sm text-system-red font-medium">{error}</p>}
               </div>
             </div>
             
             <div className="flex justify-end gap-3">
-              <button onClick={() => setShowModal(false)} className="btn-outline !py-2">Cancel</button>
-              <button onClick={() => setShowModal(false)} className="btn-primary !py-2">Connect</button>
+              <button 
+                onClick={() => { setShowModal(false); setRepoUrl(""); setError(null); }} 
+                className="btn-outline !py-2"
+                disabled={isConnecting}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleConnect} 
+                className="btn-primary !py-2 min-w-[120px]"
+                disabled={isConnecting}
+              >
+                {isConnecting ? (
+                  <div className="flex items-center gap-2">
+                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    Connecting...
+                  </div>
+                ) : "Connect"}
+              </button>
             </div>
           </div>
         </div>

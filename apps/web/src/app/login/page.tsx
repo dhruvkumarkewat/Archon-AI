@@ -21,6 +21,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const { login, oauthLogin, isDemo } = useAuth();
 
   useEffect(() => setMounted(true), []);
@@ -45,7 +46,11 @@ export default function LoginPage() {
       await oauthLogin(provider);
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.message || `Failed to sign in with ${provider}`);
+      if (err.code === 'auth/account-exists-with-different-credential' || (err.message && err.message.includes('auth/account-exists-with-different-credential'))) {
+        setError("An account already exists with the same email address. Please sign in using the provider you originally used (e.g., Google or Email/Password).");
+      } else {
+        setError(err.message || `Failed to sign in with ${provider}`);
+      }
     }
   };
 
@@ -71,7 +76,7 @@ export default function LoginPage() {
         <div className="relative z-10">
           <Link href="/" className="flex items-center gap-3 group">
             <SystemIcon className="w-10 h-10 transition-transform duration-500 group-hover:rotate-180" />
-            <span className="text-2xl font-serif font-bold text-white">DevForge<span className="text-system-red-light"> System</span></span>
+            <span className="text-2xl font-serif font-bold text-white">Archon<span className="text-system-red-light"> System</span></span>
           </Link>
         </div>
 
@@ -98,7 +103,7 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10">
-          <p className="text-white/30 text-sm">&copy; 2026 DevForge System</p>
+          <p className="text-white/30 text-sm">&copy; 2026 Archon Platform</p>
         </div>
       </div>
 
@@ -107,7 +112,7 @@ export default function LoginPage() {
         <div className={`w-full max-w-md transition-all duration-700 ${mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
           <div className="lg:hidden flex items-center gap-2 mb-8">
             <SystemIcon className="w-8 h-8" />
-            <span className="text-xl font-serif font-bold text-system-blue">DevForge System</span>
+            <span className="text-xl font-serif font-bold text-system-blue">Archon Platform</span>
           </div>
 
           <h1 className="text-3xl font-serif font-bold text-system-blue mb-2">Sign in to your account</h1>

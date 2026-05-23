@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "DevForge System — System-Powered Developer Platform",
+  title: "Archon Platform — System-Powered Developer Platform",
   description:
     "Transform your development workflow with System-powered code analysis, bug detection, API documentation generation, and architecture visualization. Built with Modern innovation.",
   keywords: ["System", "developer tools", "code analysis", "bug detection", "API documentation"],
